@@ -49,6 +49,7 @@ DEPLOY_PRIME_URL=
    - `202608010002_team_schedule.sql`
    - `202608010003_audit_triggers.sql`
    - `202608010004_player_availability.sql`
+   - `202608010005_player_absence_date.sql`
 4. התחברו בפעם הראשונה עם `noamfrostig@gmail.com` כדי ליצור את מנהל המערכת היחיד.
 
 ## Netlify
