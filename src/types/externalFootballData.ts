@@ -1,0 +1,1 @@
+export interface ExternalFootballDataProvider { getTeam(): Promise<unknown>; getPlayers(): Promise<unknown[]>; getMatches(): Promise<unknown[]>; getMatchStats(): Promise<unknown[]>; getLeagueTable(): Promise<unknown[]>; }

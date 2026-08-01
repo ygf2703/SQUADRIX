@@ -1,0 +1,4 @@
+project_id = "maccabi-kfar-saba-team-manager"
+[auth]
+site_url = "http://localhost:5173"
+additional_redirect_urls = ["http://localhost:5173", "https://*.netlify.app"]
