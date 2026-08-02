@@ -7,6 +7,7 @@ delete from public.audit_logs;
 delete from public.goals;
 delete from public.match_player_stats;
 delete from public.matches;
+delete from public.team_schedule_events;
 delete from public.player_seasons;
 delete from public.players;
 delete from public.teams;
