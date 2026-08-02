@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { z } from 'zod';
 import { authService } from '../services/authService';
 import { isConfigured } from '../lib/supabase';
@@ -7,6 +8,7 @@ const passwordSchema = z.string().min(8, 'הסיסמה חייבת להכיל ל�
 type AuthMode = 'login' | 'signup' | 'recover' | 'update-password';
 
 export function LoginPage() {
+  const navigate = useNavigate();
   const recoveryLink = new URLSearchParams(window.location.search).get('reset_password') === '1';
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -40,10 +42,10 @@ export function LoginPage() {
       } else if (isReset) {
         await authService.updatePassword(password);
         window.history.replaceState({}, '', '/login');
-        switchMode('login');
-        setMessage('הסיסמה עודכנה. אפשר להיכנס כעת.');
+        navigate('/', { replace: true });
       } else {
         await authService.signIn(email, password);
+        navigate('/', { replace: true });
       }
     } catch {
       setMessage(isSignup ? 'לא ניתן להשלים את ההרשמה. ייתכן שהמייל כבר קיים.' : isReset ? 'קישור האיפוס אינו תקף או שפג תוקפו. בקשו קישור חדש.' : 'כתובת המייל או הסיסמה שגויות.');
