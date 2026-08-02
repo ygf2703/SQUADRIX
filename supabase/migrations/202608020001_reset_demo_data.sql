@@ -11,7 +11,9 @@ delete from public.player_seasons;
 delete from public.players;
 delete from public.teams;
 delete from public.seasons;
-delete from storage.objects where bucket_id = 'club-logos';
+-- Storage objects are intentionally not deleted here: Supabase prevents direct
+-- deletion from storage.objects. Clearing logo_url detaches existing assets;
+-- they can be removed later from Storage → club-logos if required.
 
 update public.clubs
 set name = 'מועדון חדש',
