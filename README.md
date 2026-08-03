@@ -1,34 +1,21 @@
 # SQUADRIX — Football Team Operations
 
-מערכת RTL לניהול הפעילות המקצועית של קבוצת כדורגל: סגל, משחקים, לוח זמנים, סטטיסטיקות, משתמשים ומיתוג מועדון.
+מערכת RTL לניהול הפעילות המקצועית של מועדון כדורגל: קבוצות, סגל, משחקים, לוח זמנים, הרכבים, סטטיסטיקות והרשאות.
 
-SQUADRIX עולה כמוצר נקי. מנהל המערכת מזין את זהות המועדון, הלוגו, צבעי הממשק והנתונים דרך האפליקציה.
+האתר השיווקי זמין ב־`/` והאפליקציה המאובטחת ב־`/app/login`.
 
-## יכולות פעילות
+## יכולות עיקריות
 
-- הרשמה וכניסה באמצעות דוא״ל וסיסמה, כולל חידוש סיסמה.
-- תפקידי משתמשים: `admin`, `professional_staff`, `viewer`.
-- מסך משתמשים למנהל: צפייה במשתמשים ושינוי תפקיד של משתמשים שאינם מנהלים.
-- ניהול סגל: הוספה, עריכה, מחיקה מאושרת, סטטוס פעיל/פצוע/עומס יתר וצפי חזרה.
-- ניהול משחקים ולוח מקצועי: אימונים, מחנות אימון, משחקי אימון ומשחקים רשמיים.
-- נתוני שחקן לכל משחק: סטטוס בסגל, הרכב/מחליף, דקות, שערים, בישולים וכרטיסים.
-- עמוד „המשחק הבא”: בחירת מערך והרכב של 11 שחקנים זמינים בלבד, עם הדמיית מגרש ומדים בצבעי המועדון.
-- דשבורד סטטיסטיקות עם בחירת שחקן ומדדי דקות, שערים, בישולים, הרכב והיעדרויות.
-- ייבוא CSV לסגל ולמשחקים, כולל תבניות להורדה ואימות לפני שמירה.
-- מיתוג מועדון: שם, שם קצר, צבעים ולוגו ב־Supabase Storage; הלוגו משמש גם כסימן מים עדין בממשק.
-- מדריך שימוש בתוך האפליקציה.
-- איפוס סביבת עבודה מתוך ההגדרות, למנהל בלבד, עם חלון אישור.
+- התחברות והרשמה באמצעות דוא״ל וסיסמה, כולל חידוש סיסמה.
+- ניהול סגל, משחקים, אירועי לוח זמנים, הרכב למשחק הבא וסטטיסטיקות שחקנים.
+- ייבוא CSV לסגל ולמשחקים, עם תבניות להורדה.
+- צבעי ממשק ולוגו מועדון המוחלים בכל האפליקציה.
+- ניהול קבוצות במועדון והרשאות לפי מועדון או קבוצה:
+  - `owner`, `ceo`, `professional_director`, `club_admin` — גישה לכל קבוצות המועדון.
+  - `head_coach`, `assistant_coach`, `analyst`, `physio`, `viewer` — גישה לקבוצות שאליהן שובצו בלבד.
+- עמוד נחיתה עם סרטון הדגמה, חודש ניסיון וגרסת Windows.
 
-## עבודה שוטפת
-
-1. מנהל נכנס ל־**הגדרות** ומגדיר את פרטי המועדון.
-2. ב־**משתמשים** מגדירים את רמות ההרשאה של חברי הצוות.
-3. מכניסים סגל ומשחקים ידנית או מייבאים CSV.
-4. ב־**המשחק הבא** בוחרים משחק, מערך ו־11 שחקנים זמינים; פצועים, מושעים ושחקנים בעומס יתר אינם מוצגים לבחירה.
-5. לכל משחק נכנסים ל־**משחקים → בחירת משחק → סגל וסטטיסטיקות**, מזינים דקות, שערים, בישולים וכרטיסים ושומרים.
-6. ב־**סטטיסטיקות** מסננים שחקן ומקבלים את התמונה המצטברת.
-
-## הרצה מקומית
+## הפעלה מקומית
 
 דרישות: Node.js 22 ומעלה ופרויקט Supabase פעיל.
 
@@ -38,90 +25,76 @@ npm.cmd install
 npm.cmd run dev
 ```
 
-פותחים את `http://127.0.0.1:5173`.
+פותחים את `http://127.0.0.1:5173`. העמוד הראשי הוא דף הנחיתה; האפליקציה נמצאת ב־`http://127.0.0.1:5173/app/login`.
 
 ## משתני סביבה
 
-בקובץ `.env` המקומי וב־Netlify יש להגדיר:
+בקובץ `.env` המקומי וגם ב־Netlify:
 
 ```env
 VITE_SUPABASE_URL=
 VITE_SUPABASE_ANON_KEY=
 ```
 
-במידה שמשתמשים ב־Netlify Functions שדורשים הרשאת שרת, מגדירים גם ב־Netlify בלבד:
-
-```env
-SUPABASE_SERVICE_ROLE_KEY=
-```
-
-אין להכניס מפתחות אמיתיים ל־Git. `VITE_SUPABASE_ANON_KEY` הוא מפתח ציבורי ללקוח; `SUPABASE_SERVICE_ROLE_KEY` הוא סודי ואסור לחשוף אותו בדפדפן.
+אין להכניס מפתחות אמיתיים ל־Git. אם נעשה שימוש בפונקציות שרת עם הרשאת שירות, מגדירים את `SUPABASE_SERVICE_ROLE_KEY` ב־Netlify בלבד.
 
 ## הגדרת Supabase
 
-1. ב־`Authentication → Providers → Email` מפעילים Email + Password ומאפשרים הרשמה.
-2. עבור הרשמה מיידית ללא קישור אימות, מכבים את **Confirm email**.
+1. ב־`Authentication → Providers → Email` מפעילים Email + Password.
+2. עבור הרשמה מיידית ללא קישור אימות, מבטלים את **Confirm email**.
 3. ב־`Authentication → URL Configuration` מגדירים:
    - Site URL: `https://squadrix.netlify.app`
-   - Redirect URLs: `https://squadrix.netlify.app/app/**`, וכן כתובות localhost לפיתוח.
-4. מריצים ב־SQL Editor את קובצי ה־migration לפי הסדר:
+   - Redirect URLs: `https://squadrix.netlify.app/app/**` וגם כתובות localhost לפיתוח.
+4. מריצים ב־SQL Editor את קובצי ה־migration לפי סדר השם שלהם. בהתקנה קיימת יש להריץ גם:
 
-   - `202608010001_initial_schema.sql`
-   - `202608010002_team_schedule.sql`
-   - `202608010003_audit_triggers.sql`
-   - `202608010004_player_availability.sql`
-   - `202608010005_player_absence_date.sql`
-   - `202608010006_csv_import.sql`
-   - `202608010007_club_branding.sql`
-   - `202608010008_official_source.sql`
-   - `202608020002_admin_workspace_reset.sql`
-   - `202608020003_match_lineups.sql`
-   - `202608020004_imported_season_statistics.sql`
-   - `202608020005_idempotent_player_import.sql`
-   - `202608020006_fix_workspace_reset.sql`
+```text
+supabase/migrations/202608030001_multi_team_access.sql
+```
 
-`202608010007_club_branding.sql` יוצר את bucket בשם `club-logos` ואת מדיניות האחסון. אם מוצגת השגיאת `Bucket not found`, יש לוודא שה־migration הזה רץ בהצלחה.
+ה־migration האחרון הכרחי לפני שימוש במספר קבוצות. הוא יוצר את טבלאות החברות, RPCs לניהול הרשאות ומדיניות RLS שמבודדת נתונים בין קבוצות ומועדונים. הוא אינו מוחק נתונים קיימים; מנהלי מערכת קיימים מקבלים בעלות על המועדון ואנשי צוות מקצועי מקבלים שיוך לקבוצות הקיימות.
 
-חשבון חדש מקבל כברירת מחדל הרשאת `viewer`. יש לקדם משתמש מורשה לתפקיד `admin` ישירות ב־Supabase בעת ההקמה הראשונה; לאחר מכן ניהול התפקידים מתבצע במסך **משתמשים**.
+## ניהול מועדון וקבוצות
 
-## ייבוא CSV
+לאחר הרצת ה־migration, בעלים/מנכ״ל/מנהל מקצועי/מנהל מועדון נכנסים ל־**ניהול מועדון**:
 
-בתוך האפליקציה:
+1. יוצרים קבוצות נוספות עם שם, שנתון, ליגה ומחוז.
+2. איש הצוות נרשם פעם אחת לאפליקציה.
+3. מזינים את כתובת הדוא״ל שלו ובוחרים שיוך לכל המועדון או לקבוצה ספציפית.
+4. המשתמש רואה רק את הקבוצות המותרות לו; בחירת הקבוצה הפעילה מסננת סגל, משחקים, לוח זמנים וסטטיסטיקות.
 
-- `סגל → ייבוא CSV → הורדת תבנית`
-- `משחקים → ייבוא CSV → הורדת תבנית`
+## נתוני משחק וסטטיסטיקות
 
-קובצי בדיקה אופציונליים נמצאים ב־repository בלבד ואינם נטענים אוטומטית:
+נתוני דקות, שערים, בישולים וכרטיסים נשמרים ברמת שחקן־משחק. מזינים אותם מתוך פירוט המשחק, והם מוצגים בעמוד השחקן ובעמוד הסטטיסטיקות. CSV של סגל מכיל נתוני פתיחה לעונה; נתונים בפועל מתעדכנים גם דרך פירוט המשחק.
 
-- `sample-imports/sample-squad-24.csv` — סגל לדוגמה של 24 שחקנים.
-- `sample-imports/sample-matches-46.csv` — 6 משחקי אימון, 36 משחקי ליגה ו־4 משחקי גביע.
-
-## איפוס נתונים להדגמה
-
-אדמין יכול לאפס את סביבת העבודה מתוך **הגדרות → איפוס סביבת העבודה**. הפעולה מוחקת את הנתונים התפעוליים של הסגל, המשחקים, הסטטיסטיקות ולוח הזמנים, ומחזירה מועדון/עונה/קבוצה נקיים. היא אינה מוחקת משתמשים או הרשאות.
-
-האפשרות זמינה רק לאחר הרצת `202608020002_admin_workspace_reset.sql`. קיים גם `202608020001_reset_demo_data.sql` לאיפוס ידני דרך SQL Editor. שתי הפעולות מיועדות להדגמה בלבד — אין להריץ אותן על נתוני מועדון פעיל. קבצי לוגו ישנים עשויים להישאר פיזית ב־Storage, אך אינם מחוברים למועדון לאחר האיפוס.
-
-## פריסה ב־Netlify
+## Netlify
 
 - Build command: `npm run build`
 - Publish directory: `dist`
-- Functions directory: `netlify/functions`
-- משתני סביבה: `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `NODE_VERSION=22`; ואם נדרשות פונקציות שרת — גם `SUPABASE_SERVICE_ROLE_KEY`.
+- Node: `22`
+- Environment variables: `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`
 
-לא מגדירים ידנית את `URL` ב־Netlify; זו משתנה מערכת שמנוהל על ידי Netlify.
+Netlify מנהל את `URL` בעצמו; אין להגדיר משתנה זה ידנית. הדף הראשי נבנה מתוך `landing/` והאפליקציה נשארת תחת `/app`.
 
-## חיבור להתאחדות לכדורגל
+## Microsoft Store ו־MSIX
 
-בהגדרות ניתן לשמור כתובת עמוד קבוצה של ההתאחדות ולבדוק את מבנה הקישור (`team_id`, `season_id`). חיבור סנכרון אוטומטי עדיין אינו פעיל: בקשת שרת רגילה אל אתר ההתאחדות נחסמת כרגע ב־`403`.
+האפליקציה כוללת מעטפת Electron. היא משתמשת באותו לקוח Supabase, כך שנתוני המועדון נשארים בענן והאפליקציה זמינה גם כיישום שולחני.
 
-לא נעקפים מנגנוני גישה או הגנות אתר. כדי לבנות סנכרון אמין נדרש API רשמי, תיעוד אינטגרציה או חשבון פורטל מורשה ברמת המועדון. עד אז מזינים את הנתונים ידנית או בייבוא CSV.
+```powershell
+# בדיקה מקומית של מעטפת הדסקטופ
+npm.cmd run desktop
 
-## גבולות ה־MVP
+# יצירת MSIX להפצה ב־Microsoft Store
+npm.cmd run desktop:msix
+```
 
-הגרסה הנוכחית מיועדת לפיילוט של מועדון יחיד. לפני מכירה למספר מועדונים יש להוסיף מבנה multi-tenant מלא: `organizations`, שיוך מועדונים לארגון, memberships ו־RLS שמבודד נתונים בין לקוחות.
+הזהות המוגדרת ב־`package.json` תואמת ל־Partner Center:
 
-לגרסת Microsoft Store מומלץ בהמשך לעטוף את אותו מוצר Web באמצעות Tauri ולהפיק חבילת MSIX; אין צורך לבנות מוצר נפרד.
+- Package identity: `FrostigKnowledgeTransfer.squadrix`
+- Publisher: `CN=8D5E8299-C1EE-4376-8783-93E12C1B31BC`
+- Application ID: `squadrix`
+- Store ID: `9PKRRC8D2LCS`
+
+לפני העלאה לחנות: מריצים `npm.cmd run lint` ו־`npm.cmd run build`, יוצרים MSIX מה־commit הסופי בלבד, מעלים ל־Partner Center, ומשלימים privacy policy, תיאור, צילומי מסך וסיווג גיל. חבילת Store לא דורשת חתימה מקומית; Microsoft חותמת את ההפצה. להפצה ישירה מחוץ לחנות נדרשת חתימה בתעודה מהימנה.
 
 ## בדיקות
 
@@ -130,31 +103,6 @@ npm.cmd run lint
 npm.cmd run build
 ```
 
-## Desktop for Windows
+## מגבלות ידועות
 
-SQUADRIX can be distributed as a native Windows desktop application without changing the existing Supabase or Netlify setup.
-
-```powershell
-# Run the packaged app locally after building the web client
-npm.cmd run desktop
-
-# Create a Windows installer and a portable executable
-npm.cmd run desktop:package
-```
-
-The generated files are placed in `release-desktop/`:
-
-- `SQUADRIX-Setup-<version>.exe` — recommended installer for clubs.
-- `SQUADRIX-Portable-<version>.exe` — runs without installation.
-
-The current desktop distribution is an unsigned Windows build. For Microsoft Store distribution, use the same Electron application to produce a signed MSIX/AppX package after opening the Microsoft Partner Center account and obtaining a signing certificate.
-
-## Landing page
-
-The standalone marketing site is located in `landing/`. It is intentionally separate from the authenticated application so it can be deployed as a second Netlify site or a subdomain without changing the existing app URL.
-
-- Main file: `landing/index.html`
-- YouTube demo link: set `SQUADRIX_YOUTUBE_URL` in `landing/config.js`
-- Price displayed: `250 ₪` per club per month
-
-The landing page is published from the same Netlify site at the root URL. The authenticated application is available at `https://squadrix.netlify.app/app/login`.
+אין עדיין אינטגרציית API רשמית מול ההתאחדות לכדורגל. עד לקבלת API מתועד ומורשה, הנתונים מוזנים ידנית או באמצעות CSV. אין לעקוף מנגנוני גישה של אתר ההתאחדות.

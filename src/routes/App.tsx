@@ -1,8 +1,10 @@
 import { Route, Routes } from 'react-router-dom';
 import { AuthProvider, useCurrentAuth } from '../contexts/AuthContext';
 import { BrandProvider } from '../contexts/BrandContext';
+import { TeamProvider } from '../contexts/TeamContext';
 import { AppLayout } from '../layouts/AppLayout';
 import { ClubSettingsPage } from '../pages/ClubSettingsPage';
+import { ClubManagementPage } from '../pages/ClubManagementPage';
 import { CsvImportPage } from '../pages/CsvImportPage';
 import { DashboardPage } from '../pages/DashboardPage';
 import { PlayerFormPage, MatchFormPage } from '../pages/EntryForms';
@@ -26,7 +28,7 @@ function Guard({ children }: { children: React.ReactNode }) {
 }
 
 export function App() {
-  return <AuthProvider><BrandProvider><Routes>
+  return <AuthProvider><BrandProvider><TeamProvider><Routes>
     <Route path="/login" element={<LoginPage />} />
     <Route element={<Guard><div /></Guard>}>
       <Route path="/" element={<DashboardPage />} />
@@ -45,8 +47,9 @@ export function App() {
       <Route path="/statistics" element={<StatisticsDashboardPage />} />
       <Route path="/guide" element={<GuidePage />} />
       <Route path="/users" element={<UsersPage />} />
+      <Route path="/club-management" element={<ClubManagementPage />} />
       <Route path="/settings" element={<ClubSettingsPage />} />
     </Route>
     <Route path="*" element={<NotFoundPage />} />
-  </Routes></BrandProvider></AuthProvider>;
+  </Routes></TeamProvider></BrandProvider></AuthProvider>;
 }

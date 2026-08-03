@@ -1,4 +1,5 @@
 import { supabase } from '../lib/supabase';
+import { teamSelection } from './teamSelection';
 import type { PlayerTotals, PlayerSeasonStatistics } from '../types/domain';
 
 export interface PlayerPerformance { playerSeasonId: string; fullName: string; squadStatus: string; expectedAbsenceUntil: string | null; appearances: number; starts: number; substituteAppearances: number; substituted: number; unusedSubstitutes: number; minutes: number; goals: number; assists: number; yellowCards: number; redCards: number }
@@ -9,7 +10,8 @@ export const statisticsService = {
   async playerTotals(): Promise<PlayerTotals[]> { const players = await statisticsService.playerPerformance(); return players.map((player) => ({ player_season_id: player.playerSeasonId, full_name: player.fullName, appearances: player.appearances, starts: player.starts, minutes: player.minutes, goals: player.goals, assists: player.assists })).sort((a, b) => b.minutes - a.minutes); },
   async playerPerformance(): Promise<PlayerPerformance[]> {
     if (!supabase) return [];
-    const { data, error } = await supabase.from('player_seasons').select('id,squad_status,expected_absence_until,players(full_name),match_player_stats(minutes_played,goals,assists,yellow_cards,red_cards,started,entered_minute,exited_minute,squad_status),player_season_statistics(appearances,starts,substitute_appearances,substituted,minutes_played,goals,assists,yellow_cards,red_cards)').order('id');
+    const team = await teamSelection.getCurrent();
+    const { data, error } = await supabase.from('player_seasons').select('id,squad_status,expected_absence_until,players(full_name),match_player_stats(minutes_played,goals,assists,yellow_cards,red_cards,started,entered_minute,exited_minute,squad_status),player_season_statistics(appearances,starts,substitute_appearances,substituted,minutes_played,goals,assists,yellow_cards,red_cards)').eq('team_id', team.id).order('id');
     if (error) throw error;
     return (data as unknown as SeasonRow[]).map((season) => {
       const stats = season.match_player_stats ?? []; const imported = season.player_season_statistics;
