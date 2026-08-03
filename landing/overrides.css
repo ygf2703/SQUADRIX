@@ -1,13 +1,26 @@
-.nav { height: 82px; }
+.nav { height: 118px; }
 
-.brand { gap: 12px; font-size: 14px; }
+.brand {
+  align-items: flex-start;
+  flex-direction: column;
+  gap: 6px;
+}
 
 .brand-mark {
   display: block;
-  width: 180px;
-  height: 48px;
-  border-radius: 2px;
-  background: #061d39 url('/squadrix-logo.png') center / 145% auto no-repeat;
+  width: 74px;
+  height: 74px;
+  border-radius: 8px;
+  background: #061d39 url('/squadrix-logo.png') 19% 48% / 400% auto no-repeat;
+}
+
+.brand-tagline {
+  color: var(--muted);
+  direction: ltr;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .02em;
+  white-space: nowrap;
 }
 
 .hero { position: relative; isolation: isolate; overflow: hidden; }
@@ -29,7 +42,8 @@
 }
 
 @media (max-width: 800px) {
-  .nav { height: 72px; }
-  .brand-mark { width: 156px; height: 42px; }
+  .nav { height: 98px; }
+  .brand .brand-mark { display: block; width: 58px; height: 58px; }
+  .brand .brand-tagline { display: block; font-size: 10px; }
   .hero-watermark { left: -55%; width: 150vw; opacity: .045; }
 }
