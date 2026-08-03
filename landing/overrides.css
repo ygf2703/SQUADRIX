@@ -4,10 +4,10 @@
 
 .brand-mark {
   display: block;
-  width: 224px;
-  height: 72px;
+  width: 244px;
+  height: 76px;
   border-radius: 4px;
-  background: #061d39 url('https://squadrix.netlify.app/squadrix-logo.png') center / 300% auto no-repeat;
+  background: #061d39 url('/squadrix-logo.png') center / 145% auto no-repeat;
 }
 
 .hero { position: relative; isolation: isolate; overflow: hidden; }
@@ -30,6 +30,6 @@
 
 @media (max-width: 800px) {
   .nav { height: 86px; }
-  .brand-mark { width: 178px; height: 58px; }
+  .brand-mark { width: 188px; height: 60px; }
   .hero-watermark { left: -55%; width: 150vw; opacity: .045; }
 }
