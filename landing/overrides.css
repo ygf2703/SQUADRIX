@@ -1,27 +1,61 @@
-.nav { height: 118px; }
+.nav { height: 224px; }
 
 .brand {
-  align-items: flex-start;
+  align-items: center;
   flex-direction: column;
-  gap: 6px;
+  gap: 10px;
+  width: 180px;
 }
 
 .brand-mark {
   display: block;
-  width: 74px;
-  height: 74px;
-  border-radius: 8px;
+  width: 168px;
+  height: 168px;
+  border-radius: 12px;
   background: #061d39 url('/squadrix-logo.png') 19% 48% / 400% auto no-repeat;
 }
 
 .brand-tagline {
   color: var(--muted);
   direction: ltr;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
   letter-spacing: .02em;
   white-space: nowrap;
 }
+
+.trial-note,
+.trial-price {
+  display: inline-flex;
+  width: max-content;
+  margin: 0 0 16px;
+  padding: 6px 11px;
+  border-radius: 999px;
+  background: #dff7ec;
+  color: #087f4b;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.price-card .trial-price { margin-bottom: 10px; }
+.price-card .trial-price + p { margin-top: 0; }
+.cta p:not(.eyebrow) { margin: -10px 0 26px; color: #31536b; font-size: 19px; }
+
+.desktop-section { background: #f3f8fa; padding: 100px 0; }
+.desktop-grid { display: grid; grid-template-columns: 1.1fr .9fr; gap: 90px; align-items: center; }
+.desktop-grid h2 { margin: 0 0 18px; font-size: 46px; line-height: 1.05; letter-spacing: -.03em; }
+.desktop-grid p:not(.eyebrow) { max-width: 620px; color: var(--muted); font-size: 20px; line-height: 1.55; }
+.desktop-badges { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 26px; }
+.desktop-badges span { padding: 7px 11px; border: 1px solid #cfe0e5; border-radius: 999px; color: #46647a; font-size: 14px; font-weight: 700; background: #fff; }
+.desktop-card { display: grid; justify-items: center; gap: 8px; padding: 40px; border: 1px solid #b8d0d9; border-radius: 18px; background: #061d39; color: #fff; text-align: center; box-shadow: 0 20px 45px #092a4a22; }
+.desktop-icon { display: grid; place-items: center; width: 66px; height: 66px; border-radius: 16px; background: #1bcf80; color: #061d39; font-size: 34px; }
+.desktop-card strong { margin-top: 9px; font-size: 24px; }
+.desktop-card small { color: #b7c6d4; }
+.desktop-card .button { width: 100%; margin-top: 18px; background: #fff; color: #061d39; }
+@media (max-width: 800px) { .desktop-section { padding: 70px 0; } .desktop-grid { grid-template-columns: 1fr; gap: 34px; } .desktop-grid h2 { font-size: 38px; } }
+
+.video-embed { padding: 0; overflow: hidden; background: #091d34; }
+.video-embed iframe { width: 100%; min-height: 285px; border: 0; }
 
 .hero { position: relative; isolation: isolate; overflow: hidden; }
 
@@ -42,8 +76,18 @@
 }
 
 @media (max-width: 800px) {
-  .nav { height: 98px; }
-  .brand .brand-mark { display: block; width: 58px; height: 58px; }
+  .nav { height: 146px; }
+  .brand { gap: 7px; width: 112px; }
+  .brand .brand-mark { display: block; width: 104px; height: 104px; }
   .brand .brand-tagline { display: block; font-size: 10px; }
   .hero-watermark { left: -55%; width: 150vw; opacity: .045; }
 }
+
+footer > div { display: flex; gap: 18px; align-items: center; }
+.privacy-page { background: #f4f8fa; }
+.privacy-wrap { width: min(860px, calc(100% - 40px)); margin: 0 auto; padding: 54px 0 80px; }
+.privacy-header { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding-bottom: 28px; border-bottom: 1px solid var(--line); }
+.privacy-header a { color: var(--navy); font-weight: 800; text-decoration: none; }.privacy-header img { width: 165px; height: 84px; object-fit: contain; }
+.privacy-card { margin-top: 28px; padding: 34px 40px; border: 1px solid var(--line); border-radius: 16px; background: #fff; box-shadow: 0 18px 48px rgba(6,29,57,.06); }
+.privacy-card h1 { margin: 0 0 8px; font-size: 42px; line-height: 1.1; }.privacy-card h2 { margin: 32px 0 10px; font-size: 23px; }.privacy-card p,.privacy-card li { color: #40546c; line-height: 1.7; }.privacy-card ul { padding-right: 22px; }.privacy-meta { margin: 0; color: var(--muted)!important; }.privacy-contact { padding: 16px 18px; border-radius: 10px; background: #edf8f2; color: #174c35!important; font-weight: 700; }.privacy-contact a { color: inherit; }
+@media (max-width: 560px) { .privacy-wrap { padding-top: 25px; }.privacy-header img { width: 125px; height: 64px; }.privacy-card { padding: 25px 20px; }.privacy-card h1 { font-size: 32px; } }

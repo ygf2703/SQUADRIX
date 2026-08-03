@@ -12,7 +12,8 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "desktop": "npm.cmd run build && electron .",
-    "desktop:package": "npm.cmd run build && electron-builder --win nsis portable"
+    "desktop:package": "npm.cmd run build && electron-builder --win nsis portable",
+    "desktop:msix": "npm.cmd run build && electron-builder --win appx --config.directories.output=release-msix"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.1",
@@ -48,6 +49,7 @@
   "build": {
     "appId": "il.squadrix.desktop",
     "productName": "SQUADRIX",
+    "icon": "build/icon.png",
     "copyright": "Copyright © 2026 SQUADRIX",
     "files": ["dist/**/*", "electron/**/*", "package.json"],
     "directories": { "buildResources": "build", "output": "release-desktop" },
@@ -62,6 +64,18 @@
       "allowToChangeInstallationDirectory": true,
       "artifactName": "SQUADRIX-Setup-${version}.${ext}"
     },
-    "portable": { "artifactName": "SQUADRIX-Portable-${version}.${ext}" }
+    "portable": { "artifactName": "SQUADRIX-Portable-${version}.${ext}" },
+    "appx": {
+      "artifactName": "SQUADRIX-${version}-Windows.msix",
+      "identityName": "FrostigKnowledgeTransfer.squadrix",
+      "applicationId": "squadrix",
+      "displayName": "SQUADRIX Football Team Operations",
+      "publisher": "CN=8D5E8299-C1EE-4376-8783-93E12C1B31BC",
+      "publisherDisplayName": "Frostig Knowledge Transfer",
+      "backgroundColor": "#061D39",
+      "minVersion": "10.0.17763.0",
+      "maxVersionTested": "10.0.26100.0",
+      "languages": ["he-IL", "en-US"]
+    }
   }
 }
