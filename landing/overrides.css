@@ -1,12 +1,12 @@
-.nav { height: 104px; }
+.nav { height: 82px; }
 
-.brand { gap: 16px; font-size: 16px; }
+.brand { gap: 12px; font-size: 14px; }
 
 .brand-mark {
   display: block;
-  width: 244px;
-  height: 76px;
-  border-radius: 4px;
+  width: 180px;
+  height: 48px;
+  border-radius: 2px;
   background: #061d39 url('/squadrix-logo.png') center / 145% auto no-repeat;
 }
 
@@ -29,7 +29,7 @@
 }
 
 @media (max-width: 800px) {
-  .nav { height: 86px; }
-  .brand-mark { width: 188px; height: 60px; }
+  .nav { height: 72px; }
+  .brand-mark { width: 156px; height: 42px; }
   .hero-watermark { left: -55%; width: 150vw; opacity: .045; }
 }
