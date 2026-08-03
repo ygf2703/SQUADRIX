@@ -12,6 +12,7 @@ SQUADRIX עולה כמוצר נקי. מנהל המערכת מזין את זהו�
 - ניהול סגל: הוספה, עריכה, מחיקה מאושרת, סטטוס פעיל/פצוע/עומס יתר וצפי חזרה.
 - ניהול משחקים ולוח מקצועי: אימונים, מחנות אימון, משחקי אימון ומשחקים רשמיים.
 - נתוני שחקן לכל משחק: סטטוס בסגל, הרכב/מחליף, דקות, שערים, בישולים וכרטיסים.
+- עמוד „המשחק הבא”: בחירת מערך והרכב של 11 שחקנים זמינים בלבד, עם הדמיית מגרש ומדים בצבעי המועדון.
 - דשבורד סטטיסטיקות עם בחירת שחקן ומדדי דקות, שערים, בישולים, הרכב והיעדרויות.
 - ייבוא CSV לסגל ולמשחקים, כולל תבניות להורדה ואימות לפני שמירה.
 - מיתוג מועדון: שם, שם קצר, צבעים ולוגו ב־Supabase Storage; הלוגו משמש גם כסימן מים עדין בממשק.
@@ -23,8 +24,9 @@ SQUADRIX עולה כמוצר נקי. מנהל המערכת מזין את זהו�
 1. מנהל נכנס ל־**הגדרות** ומגדיר את פרטי המועדון.
 2. ב־**משתמשים** מגדירים את רמות ההרשאה של חברי הצוות.
 3. מכניסים סגל ומשחקים ידנית או מייבאים CSV.
-4. לכל משחק נכנסים ל־**משחקים → בחירת משחק → סגל וסטטיסטיקות**, מזינים דקות, שערים, בישולים וכרטיסים ושומרים.
-5. ב־**סטטיסטיקות** מסננים שחקן ומקבלים את התמונה המצטברת.
+4. ב־**המשחק הבא** בוחרים משחק, מערך ו־11 שחקנים זמינים; פצועים, מושעים ושחקנים בעומס יתר אינם מוצגים לבחירה.
+5. לכל משחק נכנסים ל־**משחקים → בחירת משחק → סגל וסטטיסטיקות**, מזינים דקות, שערים, בישולים וכרטיסים ושומרים.
+6. ב־**סטטיסטיקות** מסננים שחקן ומקבלים את התמונה המצטברת.
 
 ## הרצה מקומית
 
@@ -61,7 +63,7 @@ SUPABASE_SERVICE_ROLE_KEY=
 2. עבור הרשמה מיידית ללא קישור אימות, מכבים את **Confirm email**.
 3. ב־`Authentication → URL Configuration` מגדירים:
    - Site URL: `https://squadrix.netlify.app`
-   - Redirect URLs: `https://squadrix.netlify.app/**`, וכן כתובות localhost לפיתוח.
+   - Redirect URLs: `https://squadrix.netlify.app/app/**`, וכן כתובות localhost לפיתוח.
 4. מריצים ב־SQL Editor את קובצי ה־migration לפי הסדר:
 
    - `202608010001_initial_schema.sql`
@@ -73,6 +75,10 @@ SUPABASE_SERVICE_ROLE_KEY=
    - `202608010007_club_branding.sql`
    - `202608010008_official_source.sql`
    - `202608020002_admin_workspace_reset.sql`
+   - `202608020003_match_lineups.sql`
+   - `202608020004_imported_season_statistics.sql`
+   - `202608020005_idempotent_player_import.sql`
+   - `202608020006_fix_workspace_reset.sql`
 
 `202608010007_club_branding.sql` יוצר את bucket בשם `club-logos` ואת מדיניות האחסון. אם מוצגת השגיאת `Bucket not found`, יש לוודא שה־migration הזה רץ בהצלחה.
 
@@ -123,3 +129,32 @@ SUPABASE_SERVICE_ROLE_KEY=
 npm.cmd run lint
 npm.cmd run build
 ```
+
+## Desktop for Windows
+
+SQUADRIX can be distributed as a native Windows desktop application without changing the existing Supabase or Netlify setup.
+
+```powershell
+# Run the packaged app locally after building the web client
+npm.cmd run desktop
+
+# Create a Windows installer and a portable executable
+npm.cmd run desktop:package
+```
+
+The generated files are placed in `release-desktop/`:
+
+- `SQUADRIX-Setup-<version>.exe` — recommended installer for clubs.
+- `SQUADRIX-Portable-<version>.exe` — runs without installation.
+
+The current desktop distribution is an unsigned Windows build. For Microsoft Store distribution, use the same Electron application to produce a signed MSIX/AppX package after opening the Microsoft Partner Center account and obtaining a signing certificate.
+
+## Landing page
+
+The standalone marketing site is located in `landing/`. It is intentionally separate from the authenticated application so it can be deployed as a second Netlify site or a subdomain without changing the existing app URL.
+
+- Main file: `landing/index.html`
+- YouTube demo link: set `SQUADRIX_YOUTUBE_URL` in `landing/config.js`
+- Price displayed: `250 ₪` per club per month
+
+The landing page is published from the same Netlify site at the root URL. The authenticated application is available at `https://squadrix.netlify.app/app/login`.

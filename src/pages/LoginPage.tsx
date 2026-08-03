@@ -41,7 +41,7 @@ export function LoginPage() {
         setMessage('ההרשמה הושלמה. אפשר להיכנס עם המייל והסיסמה שבחרת.');
       } else if (isReset) {
         await authService.updatePassword(password);
-        window.history.replaceState({}, '', '/login');
+        window.history.replaceState({}, '', '/app/login');
         navigate('/', { replace: true });
       } else {
         await authService.signIn(email, password);

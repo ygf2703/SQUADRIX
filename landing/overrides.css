@@ -1,0 +1,35 @@
+.nav { height: 104px; }
+
+.brand { gap: 16px; font-size: 16px; }
+
+.brand-mark {
+  display: block;
+  width: 224px;
+  height: 72px;
+  border-radius: 4px;
+  background: #061d39 url('https://squadrix.netlify.app/squadrix-logo.png') center / 300% auto no-repeat;
+}
+
+.hero { position: relative; isolation: isolate; overflow: hidden; }
+
+.hero-copy,
+.hero-visual { position: relative; z-index: 1; }
+
+.hero-watermark {
+  position: absolute;
+  z-index: 0;
+  left: -15%;
+  top: 50%;
+  width: min(70vw, 780px);
+  height: auto;
+  transform: translateY(-50%) rotate(-10deg);
+  opacity: 0.055;
+  pointer-events: none;
+  filter: saturate(.8);
+}
+
+@media (max-width: 800px) {
+  .nav { height: 86px; }
+  .brand-mark { width: 178px; height: 58px; }
+  .hero-watermark { left: -55%; width: 150vw; opacity: .045; }
+}

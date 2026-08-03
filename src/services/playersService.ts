@@ -4,7 +4,7 @@ import type { Player, PlayerStatus } from '../types/domain';
 export interface CreatePlayerInput { full_name: string; shirt_number?: number; primary_position: string; secondary_position?: string; squad_status: PlayerStatus; expected_absence_until?: string; birth_date?: string; dominant_foot?: 'right' | 'left' | 'both'; previous_club?: string; professional_notes?: string }
 
 export const playersService = {
-  async list(): Promise<Player[]> { if (!supabase) return []; const { data, error } = await supabase.from('players').select('*,player_seasons(*)').order('full_name'); if (error) throw error; return data as Player[]; },
+  async list(): Promise<Player[]> { if (!supabase) return []; const { data, error } = await supabase.from('players').select('*,player_seasons(*,player_season_statistics(*))').order('full_name'); if (error) throw error; return data as Player[]; },
   async create(input: CreatePlayerInput) {
     if (!supabase) throw new Error('Supabase is not configured');
     const { data: team, error: teamError } = await supabase.from('teams').select('id,current_season_id').not('current_season_id', 'is', null).limit(1).single();
