@@ -1,8 +1,27 @@
 import type { ReactNode } from 'react';
-import { BarChart3, BookOpen, CalendarDays, ClipboardList, LayoutDashboard, LogOut, Settings, Users, UsersRound } from 'lucide-react';
+import { BarChart3, BookOpen, CalendarDays, ClipboardList, LayoutDashboard, LogOut, Settings, Shirt, Users, UsersRound } from 'lucide-react';
 import { NavLink, Outlet } from 'react-router-dom';
 import type { Profile } from '../types/domain';
 import { authService } from '../services/authService';
 import { useBrand } from '../contexts/BrandContext';
-const links = [{ to: '/', label: 'דשבורד', icon: LayoutDashboard }, { to: '/players', label: 'סגל', icon: UsersRound }, { to: '/matches', label: 'משחקים', icon: ClipboardList }, { to: '/schedule', label: 'לוח זמנים', icon: CalendarDays }, { to: '/statistics', label: 'סטטיסטיקות', icon: BarChart3 }, { to: '/guide', label: 'מדריך שימוש', icon: BookOpen }, { to: '/users', label: 'משתמשים', icon: Users, admin: true }, { to: '/settings', label: 'הגדרות', icon: Settings, admin: true }];
-export function AppLayout({ profile }: { profile: Profile; children?: ReactNode }) { const { brand } = useBrand(); const work = links.filter((link) => !link.admin); const admin = links.filter((link) => link.admin && profile.role === 'admin'); const renderLinks = (items: typeof links) => items.map((link) => { const Icon = link.icon; return <NavLink key={link.to} to={link.to} end={link.to === '/'}><Icon size={18} aria-hidden="true"/><span>{link.label}</span></NavLink>; }); return <div className="shell"><aside><div className="brand app-brand"><img src="/squadrix-logo.png" alt="SQUADRIX"/><div><b>SQUADRIX</b><span>Football Team Operations</span></div></div><nav><p>{brand.name}</p>{renderLinks(work)}{admin.length > 0 && <><p className="nav-divider">ניהול מערכת</p>{renderLinks(admin)}</>}</nav><div className="sidebar-footer"><span>{profile.full_name || profile.email}</span><small>{profile.role === 'admin' ? 'מנהל מערכת' : profile.role === 'professional_staff' ? 'צוות מקצועי' : 'צפייה בלבד'}</small></div></aside><main>{brand.logo_url && <img className="app-watermark club-watermark" src={brand.logo_url} alt="" aria-hidden="true"/>}<header><div className="mobile-team"><img src="/squadrix-logo.png" alt="" aria-hidden="true"/><span>SQUADRIX</span></div><div className="header-user"><b>{profile.full_name || profile.email}</b><span className="role">{brand.name} · {profile.role === 'admin' ? 'מנהל מערכת' : profile.role === 'professional_staff' ? 'צוות מקצועי' : 'צפייה בלבד'}</span></div><button className="button ghost" onClick={() => void authService.signOut()}><LogOut size={16}/>יציאה</button></header><Outlet /></main></div>; }
+
+const links = [
+  { to: '/', label: 'דשבורד', icon: LayoutDashboard },
+  { to: '/next-match', label: 'המשחק הבא', icon: Shirt },
+  { to: '/players', label: 'סגל', icon: UsersRound },
+  { to: '/matches', label: 'משחקים', icon: ClipboardList },
+  { to: '/schedule', label: 'לוח זמנים', icon: CalendarDays },
+  { to: '/statistics', label: 'סטטיסטיקות', icon: BarChart3 },
+  { to: '/guide', label: 'מדריך שימוש', icon: BookOpen },
+  { to: '/users', label: 'משתמשים', icon: Users, admin: true },
+  { to: '/settings', label: 'הגדרות', icon: Settings, admin: true },
+];
+
+export function AppLayout({ profile }: { profile: Profile; children?: ReactNode }) {
+  const { brand } = useBrand();
+  const work = links.filter((link) => !link.admin);
+  const admin = links.filter((link) => link.admin && profile.role === 'admin');
+  const renderLinks = (items: typeof links) => items.map((link) => { const Icon = link.icon; return <NavLink key={link.to} to={link.to} end={link.to === '/'}><Icon size={18} aria-hidden="true"/><span>{link.label}</span></NavLink>; });
+  const role = profile.role === 'admin' ? 'מנהל מערכת' : profile.role === 'professional_staff' ? 'צוות מקצועי' : 'צפייה בלבד';
+  return <div className="shell"><aside><div className="brand app-brand"><img src="/squadrix-logo.png" alt="SQUADRIX"/><div><b>SQUADRIX</b><span>Football Team Operations</span></div></div><nav><p>{brand.name}</p>{renderLinks(work)}{admin.length > 0 && <><p className="nav-divider">ניהול מערכת</p>{renderLinks(admin)}</>}</nav><div className="sidebar-footer"><span>{profile.full_name || profile.email}</span><small>{role}</small></div></aside><main>{brand.logo_url && <img className="app-watermark club-watermark" src={brand.logo_url} alt="" aria-hidden="true"/>}<header><div className="mobile-team"><img src="/squadrix-logo.png" alt="" aria-hidden="true"/><span>SQUADRIX</span></div><div className="header-user"><b>{profile.full_name || profile.email}</b><span className="role">{brand.name} · {role}</span></div><button className="button ghost" onClick={() => void authService.signOut()}><LogOut size={16}/>יציאה</button></header><Outlet /></main></div>;
+}
