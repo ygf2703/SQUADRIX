@@ -36,6 +36,31 @@ VITE_SUPABASE_URL=
 VITE_SUPABASE_ANON_KEY=
 ```
 
+### מנוי Microsoft Store
+
+המנוי החודשי של SQUADRIX מוגדר כ־Microsoft Store Subscription Add-on:
+
+- Add-on Store ID: `9P2WBRG7415R`
+- מחיר: 250 ₪ לחודש למועדון
+- ניסיון: 30 ימים ממועד יצירת המועדון
+
+יש להריץ את המיגרציה הבאה לאחר `202608030001_multi_team_access.sql`:
+
+```text
+supabase/migrations/202608030002_club_subscriptions.sql
+```
+
+ב־Netlify מגדירים את המשתנים הבאים **בצד השרת בלבד**. אין להוסיף קידומת `VITE_` ואין להכניס את ה־secret ל־Git:
+
+```env
+MICROSOFT_STORE_TENANT_ID=d1407724-44a1-4743-9787-c8b0905ab76e
+MICROSOFT_STORE_CLIENT_ID=244469db-e83d-4081-be23-4deef0d39a0b
+MICROSOFT_STORE_CLIENT_SECRET=
+MICROSOFT_STORE_SUBSCRIPTION_STORE_ID=9P2WBRG7415R
+```
+
+מסך **מנוי מועדון** זמין לבעלי מועדון ולמנהלי מועדון. הוא מציג את מצב הניסיון/המנוי ומוביל לרכישה ב־Microsoft Store. סטטוס מנוי אינו ניתן לשינוי מהדפדפן; אימות entitlement מול Microsoft Store חייב להיעשות בפונקציית שרת לפני שהמערכת תעדכן מנוי ל־`active`.
+
 אין להכניס מפתחות אמיתיים ל־Git. אם נעשה שימוש בפונקציות שרת עם הרשאת שירות, מגדירים את `SUPABASE_SERVICE_ROLE_KEY` ב־Netlify בלבד.
 
 ## הגדרת Supabase
