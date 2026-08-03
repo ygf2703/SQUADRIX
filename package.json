@@ -69,7 +69,7 @@
       "artifactName": "SQUADRIX-${version}-Windows.msix",
       "identityName": "FrostigKnowledgeTransfer.squadrix",
       "applicationId": "squadrix",
-      "displayName": "SQUADRIX Football Team Operations",
+      "displayName": "SQUADRIX",
       "publisher": "CN=8D5E8299-C1EE-4376-8783-93E12C1B31BC",
       "publisherDisplayName": "Frostig Knowledge Transfer",
       "backgroundColor": "#061D39",

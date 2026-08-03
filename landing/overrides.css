@@ -51,7 +51,8 @@
 .desktop-icon { display: grid; place-items: center; width: 66px; height: 66px; border-radius: 16px; background: #1bcf80; color: #061d39; font-size: 34px; }
 .desktop-card strong { margin-top: 9px; font-size: 24px; }
 .desktop-card small { color: #b7c6d4; }
-.desktop-card .button { width: 100%; margin-top: 18px; background: #fff; color: #061d39; }
+.desktop-trial { margin: 20px 0 0; color: #087f4b!important; font-weight: 800; }
+.store-download { width: 100%; display: flex; direction: ltr; align-items: center; justify-content: center; gap: 11px; margin-top: 18px; padding: 11px 18px; border-radius: 8px; background: #fff; color: #1b1b1b; text-decoration: none; box-shadow: 0 8px 22px #00000028; transition: .2s transform,.2s box-shadow; }.store-download:hover { transform: translateY(-2px); box-shadow: 0 13px 28px #00000035; }.store-download-copy { display: grid; line-height: 1.05; text-align: left; }.store-download-copy small { color: #454545; font-size: 11px; }.store-download-copy b { font-family: Arial,sans-serif; font-size: 19px; font-weight: 600; }.microsoft-mark { display: grid; grid-template-columns:repeat(2,12px); grid-template-rows:repeat(2,12px); gap:2px; }.microsoft-mark i:nth-child(1){background:#f25022}.microsoft-mark i:nth-child(2){background:#7fba00}.microsoft-mark i:nth-child(3){background:#00a4ef}.microsoft-mark i:nth-child(4){background:#ffb900}.desktop-trial-badge { margin-top: 8px; color: #69ecae; font-size: 13px; font-weight: 800; }
 @media (max-width: 800px) { .desktop-section { padding: 70px 0; } .desktop-grid { grid-template-columns: 1fr; gap: 34px; } .desktop-grid h2 { font-size: 38px; } }
 
 .video-embed { padding: 0; overflow: hidden; background: #091d34; }

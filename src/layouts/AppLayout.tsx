@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { BarChart3, BookOpen, CalendarDays, ClipboardList, LayoutDashboard, LogOut, Settings, Shirt, Users, UsersRound } from 'lucide-react';
+import { BarChart3, BookOpen, CalendarDays, ClipboardList, CreditCard, LayoutDashboard, LogOut, Settings, Shirt, Users, UsersRound } from 'lucide-react';
 import { NavLink, Outlet } from 'react-router-dom';
 import type { Profile } from '../types/domain';
 import { authService } from '../services/authService';
@@ -15,6 +15,7 @@ const links = [
   { to: '/statistics', label: 'סטטיסטיקות', icon: BarChart3 },
   { to: '/guide', label: 'מדריך שימוש', icon: BookOpen },
   { to: '/club-management', label: 'ניהול מועדון', icon: Users, clubManager: true },
+  { to: '/subscription', label: 'מנוי מועדון', icon: CreditCard, clubManager: true },
   { to: '/users', label: 'משתמשים', icon: Users, admin: true },
   { to: '/settings', label: 'הגדרות', icon: Settings, clubManager: true },
 ];

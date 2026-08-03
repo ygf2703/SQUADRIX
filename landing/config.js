@@ -9,5 +9,6 @@ if (SQUADRIX_WINDOWS_DOWNLOAD_URL && windowsDownload) {
   windowsDownload.href = SQUADRIX_WINDOWS_DOWNLOAD_URL;
   windowsDownload.target = '_blank';
   windowsDownload.rel = 'noreferrer';
-  windowsDownload.textContent = 'הורדה מ־Microsoft Store';
+  const label = windowsDownload.querySelector('.store-download-label');
+  if (label) label.textContent = 'להורדה מ־Microsoft Store';
 }

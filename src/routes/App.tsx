@@ -5,6 +5,7 @@ import { TeamProvider } from '../contexts/TeamContext';
 import { AppLayout } from '../layouts/AppLayout';
 import { ClubSettingsPage } from '../pages/ClubSettingsPage';
 import { ClubManagementPage } from '../pages/ClubManagementPage';
+import { SubscriptionPage } from '../pages/SubscriptionPage';
 import { CsvImportPage } from '../pages/CsvImportPage';
 import { DashboardPage } from '../pages/DashboardPage';
 import { PlayerFormPage, MatchFormPage } from '../pages/EntryForms';
@@ -48,6 +49,7 @@ export function App() {
       <Route path="/guide" element={<GuidePage />} />
       <Route path="/users" element={<UsersPage />} />
       <Route path="/club-management" element={<ClubManagementPage />} />
+      <Route path="/subscription" element={<SubscriptionPage />} />
       <Route path="/settings" element={<ClubSettingsPage />} />
     </Route>
     <Route path="*" element={<NotFoundPage />} />
