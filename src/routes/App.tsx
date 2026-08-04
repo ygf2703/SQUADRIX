@@ -1,7 +1,7 @@
 import { Route, Routes } from 'react-router-dom';
 import { AuthProvider, useCurrentAuth } from '../contexts/AuthContext';
 import { BrandProvider } from '../contexts/BrandContext';
-import { TeamProvider } from '../contexts/TeamContext';
+import { TeamProvider, useTeam } from '../contexts/TeamContext';
 import { AppLayout } from '../layouts/AppLayout';
 import { ClubSettingsPage } from '../pages/ClubSettingsPage';
 import { ClubManagementPage } from '../pages/ClubManagementPage';
@@ -20,12 +20,20 @@ import { SchedulePage } from '../pages/SchedulePage';
 import { StatisticsDashboardPage } from '../pages/StatisticsDashboardPage';
 import { UsersPage } from '../pages/UsersPage';
 import { NotFoundPage } from '../pages/UtilityPages';
+import { EmptyState, LoadingSkeleton } from '../components/ui';
 
 function Guard({ children }: { children: React.ReactNode }) {
   const { profile, loading } = useCurrentAuth();
   if (loading) return <div className="center">טוען…</div>;
   if (!profile?.is_active) return <LoginPage />;
   return <AppLayout profile={profile}>{children}</AppLayout>;
+}
+
+function TeamEditGuard({ children }: { children: React.ReactNode }) {
+  const { loading, canEditActiveTeam } = useTeam();
+  if (loading) return <LoadingSkeleton lines={4} />;
+  if (!canEditActiveTeam) return <EmptyState title="אין הרשאת עריכה לקבוצה" text="חשבון צפייה יכול לראות נתונים בלבד. מנהל המועדון יכול להעניק לצוות המקצועי הרשאה לקבוצה דרך ניהול מועדון." />;
+  return <>{children}</>;
 }
 
 export function App() {
@@ -35,14 +43,14 @@ export function App() {
       <Route path="/" element={<DashboardPage />} />
       <Route path="/next-match" element={<NextMatchPage />} />
       <Route path="/players" element={<PlayersPage />} />
-      <Route path="/players/new" element={<PlayerFormPage />} />
-      <Route path="/players/import" element={<CsvImportPage />} />
-      <Route path="/players/:id/edit" element={<PlayerFormPage />} />
+      <Route path="/players/new" element={<TeamEditGuard><PlayerFormPage /></TeamEditGuard>} />
+      <Route path="/players/import" element={<TeamEditGuard><CsvImportPage /></TeamEditGuard>} />
+      <Route path="/players/:id/edit" element={<TeamEditGuard><PlayerFormPage /></TeamEditGuard>} />
       <Route path="/players/:id" element={<PlayerDetailPage />} />
       <Route path="/matches" element={<MatchesPage />} />
-      <Route path="/matches/new" element={<MatchFormPage />} />
-      <Route path="/matches/import" element={<CsvImportPage />} />
-      <Route path="/matches/:id/edit" element={<MatchFormPage />} />
+      <Route path="/matches/new" element={<TeamEditGuard><MatchFormPage /></TeamEditGuard>} />
+      <Route path="/matches/import" element={<TeamEditGuard><CsvImportPage /></TeamEditGuard>} />
+      <Route path="/matches/:id/edit" element={<TeamEditGuard><MatchFormPage /></TeamEditGuard>} />
       <Route path="/matches/:id" element={<MatchDetailPage />} />
       <Route path="/schedule" element={<SchedulePage />} />
       <Route path="/statistics" element={<StatisticsDashboardPage />} />
