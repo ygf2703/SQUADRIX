@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { LoadingSkeleton, PageHeader, PrimaryButton } from '../components/ui';
 import { useBrand } from '../contexts/BrandContext';
 import { useCurrentAuth } from '../contexts/AuthContext';
+import { useTeam } from '../contexts/TeamContext';
 import { lineupsService } from '../services/lineupsService';
 import { matchesService } from '../services/matchesService';
 import { playersService } from '../services/playersService';
@@ -34,9 +35,9 @@ function eligiblePlayers(players: Player[]): EligiblePlayer[] {
 }
 
 export function NextMatchPage() {
-  const { brand } = useBrand(); const { profile } = useCurrentAuth();
+  const { brand } = useBrand(); const { profile } = useCurrentAuth(); const { canEditActiveTeam } = useTeam();
   const [matches, setMatches] = useState<Match[] | null>(null); const [available, setAvailable] = useState<EligiblePlayer[]>([]); const [matchId, setMatchId] = useState(''); const [formation, setFormation] = useState('4-3-3'); const [selection, setSelection] = useState<Record<string, string>>({}); const [saving, setSaving] = useState(false); const [message, setMessage] = useState('');
-  const editable = profile?.role === 'admin' || profile?.role === 'professional_staff'; const slots = formationOptions[formation]; const selectedMatch = matches?.find((match) => match.id === matchId); const assigned = useMemo(() => new Set(slots.map((slot) => selection[slot.id]).filter(Boolean)), [selection, slots]);
+  const editable = Boolean(profile) && canEditActiveTeam; const slots = formationOptions[formation]; const selectedMatch = matches?.find((match) => match.id === matchId); const assigned = useMemo(() => new Set(slots.map((slot) => selection[slot.id]).filter(Boolean)), [selection, slots]);
   useEffect(() => { void Promise.all([matchesService.listUpcoming(), playersService.list()]).then(([upcoming, players]) => { setMatches(upcoming); setAvailable(eligiblePlayers(players)); setMatchId(upcoming[0]?.id ?? ''); }).catch(() => { setMatches([]); setAvailable([]); }); }, []);
   useEffect(() => { if (!matchId) { setSelection({}); return; } setMessage(''); void lineupsService.list(matchId).then((rows) => { setFormation(formationOptions[rows[0]?.formation] ? rows[0].formation : '4-3-3'); setSelection(Object.fromEntries(rows.filter((row) => available.some((player) => player.seasonId === row.player_season_id)).map((row) => [row.formation_slot, row.player_season_id]))); }).catch(() => setSelection({})); }, [matchId, available]);
   const changePlayer = (slotId: string, playerId: string) => setSelection((current) => { const next = { ...current, [slotId]: playerId }; if (playerId) Object.keys(next).forEach((key) => { if (key !== slotId && next[key] === playerId) next[key] = ''; }); return next; });

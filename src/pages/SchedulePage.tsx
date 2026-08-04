@@ -1,7 +1,270 @@
-import { useEffect, useState } from 'react'; import { zodResolver } from '@hookform/resolvers/zod'; import { CalendarDays, MapPin, Plus, Trash2, X } from 'lucide-react'; import { useForm } from 'react-hook-form'; import { z } from 'zod'; import { ConfirmDialog } from '../components/ConfirmDialog'; import { EmptyState, ErrorState, LoadingSkeleton, PageHeader, PrimaryButton, SecondaryButton } from '../components/ui'; import { PermissionGuard } from '../components/PermissionGuard'; import { useAuth } from '../hooks/useAuth'; import { scheduleService } from '../services/scheduleService'; import type { ScheduleEvent, ScheduleEventType } from '../types/domain';
-const schema = z.object({ event_type: z.enum(['training','training_camp','friendly_match']), title: z.string().trim().min(2, 'יש להזין שם לאירוע.'), starts_at: z.string().min(1, 'יש לבחור תאריך ושעת התחלה.'), ends_at: z.string().optional(), venue: z.string().trim().optional(), description: z.string().trim().optional() }).refine((value) => !value.ends_at || value.ends_at >= value.starts_at, { path: ['ends_at'], message: 'מועד הסיום חייב להיות אחרי מועד ההתחלה.' });
+import { useEffect, useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { CalendarDays, MapPin, Plus, Trash2, X } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { ConfirmDialog } from "../components/ConfirmDialog";
+import {
+  EmptyState,
+  ErrorState,
+  LoadingSkeleton,
+  PageHeader,
+  PrimaryButton,
+  SecondaryButton,
+} from "../components/ui";
+import { PermissionGuard } from "../components/PermissionGuard";
+import { useAuth } from "../hooks/useAuth";
+import { useTeam } from "../contexts/TeamContext";
+import { scheduleService } from "../services/scheduleService";
+import type { ScheduleEvent, ScheduleEventType } from "../types/domain";
+const schema = z
+  .object({
+    event_type: z.enum(["training", "training_camp", "friendly_match"]),
+    title: z.string().trim().min(2, "יש להזין שם לאירוע."),
+    starts_at: z.string().min(1, "יש לבחור תאריך ושעת התחלה."),
+    ends_at: z.string().optional(),
+    venue: z.string().trim().optional(),
+    description: z.string().trim().optional(),
+  })
+  .refine((value) => !value.ends_at || value.ends_at >= value.starts_at, {
+    path: ["ends_at"],
+    message: "מועד הסיום חייב להיות אחרי מועד ההתחלה.",
+  });
 type FormValues = z.infer<typeof schema>;
-const labels: Record<ScheduleEventType, string> = { training: 'אימון', training_camp: 'מחנה אימונים', friendly_match: 'משחק אימון' };
-function formatDate(value: string) { return new Intl.DateTimeFormat('he-IL', { weekday: 'short', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' }).format(new Date(value)); }
-export function SchedulePage() { const { profile } = useAuth(); const [events, setEvents] = useState<ScheduleEvent[] | null>(null); const [failed, setFailed] = useState(false); const [formOpen, setFormOpen] = useState(false); const [deleting, setDeleting] = useState<ScheduleEvent | null>(null); const [busy, setBusy] = useState(false); const load = () => { setFailed(false); void scheduleService.list().then(setEvents).catch(() => { setEvents([]); setFailed(true); }); }; useEffect(load, []); const editable = profile?.role === 'admin' || profile?.role === 'professional_staff'; const remove = async () => { if (!deleting) return; setBusy(true); try { await scheduleService.remove(deleting.id); setDeleting(null); load(); } finally { setBusy(false); } }; return <><PageHeader title="לוח זמנים מקצועי" description="אימונים, מחנות אימונים ומשחקי אימון בעונה הנוכחית" action={<PermissionGuard roles={['admin','professional_staff']}><PrimaryButton onClick={() => setFormOpen(true)}><Plus size={17}/>הוסף אירוע</PrimaryButton></PermissionGuard>} />{formOpen && editable && <ScheduleForm onClose={() => setFormOpen(false)} onSaved={() => { setFormOpen(false); load(); }}/>} {events === null ? <LoadingSkeleton lines={5} /> : failed ? <ErrorState retry={load}/> : events.length === 0 ? <EmptyState title="אין אירועים בלוח הזמנים" text="הוסיפו אימון, מחנה אימונים או משחק אימון כדי לתכנן את השבוע." action={editable ? <PrimaryButton onClick={() => setFormOpen(true)}>הוסף אירוע</PrimaryButton> : undefined}/> : <div className="schedule-list">{events.map((event) => <article className="schedule-card" key={event.id}><div className={`schedule-type type-${event.event_type}`}><CalendarDays size={19}/><span>{labels[event.event_type]}</span></div><div><h2>{event.title}</h2><p>{formatDate(event.starts_at)}{event.ends_at ? ` — ${formatDate(event.ends_at)}` : ''}</p>{event.venue && <p><MapPin size={15}/>{event.venue}</p>}</div><span className={`schedule-status status-${event.status}`}>{event.status === 'confirmed' ? 'מאושר' : event.status === 'cancelled' ? 'בוטל' : 'מתוכנן'}</span><PermissionGuard roles={['admin','professional_staff']}><button className="icon-button schedule-delete" onClick={() => setDeleting(event)} aria-label={`מחיקת ${event.title}`} title="מחיקה"><Trash2 size={18}/></button></PermissionGuard></article>)}</div>}{deleting && <ConfirmDialog title={`למחוק את ${deleting.title}?`} description="האירוע יוסר מלוח הזמנים לכל המשתמשים. אין אפשרות לבטל פעולה זו." onCancel={() => setDeleting(null)} onConfirm={() => void remove()} busy={busy}/>}</>; }
-function ScheduleForm({ onClose, onSaved }: { onClose: () => void; onSaved: () => void }) { const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<FormValues>({ resolver: zodResolver(schema), defaultValues: { event_type: 'training' } }); const [error, setError] = useState(''); const submit = async (values: FormValues) => { setError(''); try { await scheduleService.create(values); onSaved(); } catch { setError('לא ניתן לשמור את האירוע. בדקו את החיבור ונסו שוב.'); } }; return <section className="drawer-backdrop" role="presentation"><form className="schedule-drawer" onSubmit={handleSubmit(submit)}><div className="drawer-header"><div><h2>הוספת אירוע ללוח הזמנים</h2><p>האירוע יוצג לכל משתמשי הקבוצה.</p></div><button className="icon-button" type="button" onClick={onClose} aria-label="סגירת הטופס" title="סגירה"><X size={20}/></button></div><label>סוג אירוע<select {...register('event_type')}><option value="training">אימון</option><option value="training_camp">מחנה אימונים</option><option value="friendly_match">משחק אימון</option></select></label><label>שם האירוע <b aria-hidden="true">*</b><input {...register('title')} placeholder="לדוגמה: אימון ערב" />{errors.title && <small className="field-error">{errors.title.message}</small>}</label><div className="form-grid"><label>מועד התחלה <b aria-hidden="true">*</b><input type="datetime-local" {...register('starts_at')} />{errors.starts_at && <small className="field-error">{errors.starts_at.message}</small>}</label><label>מועד סיום<input type="datetime-local" {...register('ends_at')} />{errors.ends_at && <small className="field-error">{errors.ends_at.message}</small>}</label></div><label>מיקום<input {...register('venue')} placeholder="לדוגמה: מגרש האימונים" /></label><label>הערה לצוות<textarea rows={3} {...register('description')} placeholder="מידע רלוונטי לאירוע" /></label>{error && <p className="form-error">{error}</p>}<div className="drawer-actions"><SecondaryButton type="button" onClick={onClose}>ביטול</SecondaryButton><PrimaryButton type="submit" disabled={isSubmitting}>{isSubmitting ? 'שומר…' : 'שמור אירוע'}</PrimaryButton></div></form></section> }
+const labels: Record<ScheduleEventType, string> = {
+  training: "אימון",
+  training_camp: "מחנה אימונים",
+  friendly_match: "משחק אימון",
+};
+function formatDate(value: string) {
+  return new Intl.DateTimeFormat("he-IL", {
+    weekday: "short",
+    day: "numeric",
+    month: "long",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(new Date(value));
+}
+export function SchedulePage() {
+  const { profile } = useAuth();
+  const { canEditActiveTeam } = useTeam();
+  const [events, setEvents] = useState<ScheduleEvent[] | null>(null);
+  const [failed, setFailed] = useState(false);
+  const [formOpen, setFormOpen] = useState(false);
+  const [deleting, setDeleting] = useState<ScheduleEvent | null>(null);
+  const [busy, setBusy] = useState(false);
+  const load = () => {
+    setFailed(false);
+    void scheduleService
+      .list()
+      .then(setEvents)
+      .catch(() => {
+        setEvents([]);
+        setFailed(true);
+      });
+  };
+  useEffect(load, []);
+  const editable = Boolean(profile) && canEditActiveTeam;
+  const remove = async () => {
+    if (!deleting) return;
+    setBusy(true);
+    try {
+      await scheduleService.remove(deleting.id);
+      setDeleting(null);
+      load();
+    } finally {
+      setBusy(false);
+    }
+  };
+  return (
+    <>
+      <PageHeader
+        title="לוח זמנים מקצועי"
+        description="אימונים, מחנות אימונים ומשחקי אימון בעונה הנוכחית"
+        action={
+          <PermissionGuard roles={["admin", "professional_staff"]}>
+            <PrimaryButton onClick={() => setFormOpen(true)}>
+              <Plus size={17} />
+              הוסף אירוע
+            </PrimaryButton>
+          </PermissionGuard>
+        }
+      />
+      {formOpen && editable && (
+        <ScheduleForm
+          onClose={() => setFormOpen(false)}
+          onSaved={() => {
+            setFormOpen(false);
+            load();
+          }}
+        />
+      )}{" "}
+      {events === null ? (
+        <LoadingSkeleton lines={5} />
+      ) : failed ? (
+        <ErrorState retry={load} />
+      ) : events.length === 0 ? (
+        <EmptyState
+          title="אין אירועים בלוח הזמנים"
+          text="הוסיפו אימון, מחנה אימונים או משחק אימון כדי לתכנן את השבוע."
+          action={
+            editable ? (
+              <PrimaryButton onClick={() => setFormOpen(true)}>
+                הוסף אירוע
+              </PrimaryButton>
+            ) : undefined
+          }
+        />
+      ) : (
+        <div className="schedule-list">
+          {events.map((event) => (
+            <article className="schedule-card" key={event.id}>
+              <div className={`schedule-type type-${event.event_type}`}>
+                <CalendarDays size={19} />
+                <span>{labels[event.event_type]}</span>
+              </div>
+              <div>
+                <h2>{event.title}</h2>
+                <p>
+                  {formatDate(event.starts_at)}
+                  {event.ends_at ? ` — ${formatDate(event.ends_at)}` : ""}
+                </p>
+                {event.venue && (
+                  <p>
+                    <MapPin size={15} />
+                    {event.venue}
+                  </p>
+                )}
+              </div>
+              <span className={`schedule-status status-${event.status}`}>
+                {event.status === "confirmed"
+                  ? "מאושר"
+                  : event.status === "cancelled"
+                    ? "בוטל"
+                    : "מתוכנן"}
+              </span>
+              <PermissionGuard roles={["admin", "professional_staff"]}>
+                <button
+                  className="icon-button schedule-delete"
+                  onClick={() => setDeleting(event)}
+                  aria-label={`מחיקת ${event.title}`}
+                  title="מחיקה"
+                >
+                  <Trash2 size={18} />
+                </button>
+              </PermissionGuard>
+            </article>
+          ))}
+        </div>
+      )}
+      {deleting && (
+        <ConfirmDialog
+          title={`למחוק את ${deleting.title}?`}
+          description="האירוע יוסר מלוח הזמנים לכל המשתמשים. אין אפשרות לבטל פעולה זו."
+          onCancel={() => setDeleting(null)}
+          onConfirm={() => void remove()}
+          busy={busy}
+        />
+      )}
+    </>
+  );
+}
+function ScheduleForm({
+  onClose,
+  onSaved,
+}: {
+  onClose: () => void;
+  onSaved: () => void;
+}) {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<FormValues>({
+    resolver: zodResolver(schema),
+    defaultValues: { event_type: "training" },
+  });
+  const [error, setError] = useState("");
+  const submit = async (values: FormValues) => {
+    setError("");
+    try {
+      await scheduleService.create(values);
+      onSaved();
+    } catch {
+      setError("לא ניתן לשמור את האירוע. בדקו את החיבור ונסו שוב.");
+    }
+  };
+  return (
+    <section className="drawer-backdrop" role="presentation">
+      <form className="schedule-drawer" onSubmit={handleSubmit(submit)}>
+        <div className="drawer-header">
+          <div>
+            <h2>הוספת אירוע ללוח הזמנים</h2>
+            <p>האירוע יוצג לכל משתמשי הקבוצה.</p>
+          </div>
+          <button
+            className="icon-button"
+            type="button"
+            onClick={onClose}
+            aria-label="סגירת הטופס"
+            title="סגירה"
+          >
+            <X size={20} />
+          </button>
+        </div>
+        <label>
+          סוג אירוע
+          <select {...register("event_type")}>
+            <option value="training">אימון</option>
+            <option value="training_camp">מחנה אימונים</option>
+            <option value="friendly_match">משחק אימון</option>
+          </select>
+        </label>
+        <label>
+          שם האירוע <b aria-hidden="true">*</b>
+          <input {...register("title")} placeholder="לדוגמה: אימון ערב" />
+          {errors.title && (
+            <small className="field-error">{errors.title.message}</small>
+          )}
+        </label>
+        <div className="form-grid">
+          <label>
+            מועד התחלה <b aria-hidden="true">*</b>
+            <input type="datetime-local" {...register("starts_at")} />
+            {errors.starts_at && (
+              <small className="field-error">{errors.starts_at.message}</small>
+            )}
+          </label>
+          <label>
+            מועד סיום
+            <input type="datetime-local" {...register("ends_at")} />
+            {errors.ends_at && (
+              <small className="field-error">{errors.ends_at.message}</small>
+            )}
+          </label>
+        </div>
+        <label>
+          מיקום
+          <input {...register("venue")} placeholder="לדוגמה: מגרש האימונים" />
+        </label>
+        <label>
+          הערה לצוות
+          <textarea
+            rows={3}
+            {...register("description")}
+            placeholder="מידע רלוונטי לאירוע"
+          />
+        </label>
+        {error && <p className="form-error">{error}</p>}
+        <div className="drawer-actions">
+          <SecondaryButton type="button" onClick={onClose}>
+            ביטול
+          </SecondaryButton>
+          <PrimaryButton type="submit" disabled={isSubmitting}>
+            {isSubmitting ? "שומר…" : "שמור אירוע"}
+          </PrimaryButton>
+        </div>
+      </form>
+    </section>
+  );
+}
